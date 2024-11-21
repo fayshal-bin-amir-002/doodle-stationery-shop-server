@@ -9,7 +9,7 @@ const sendErrorResponse = (
   message: string,
   error: string | object,
   status: number,
-  stack?: string
+  stack?: string,
 ) => {
   const errorResponse: TErrorResponse = {
     success: false,
@@ -41,12 +41,34 @@ const createProduct = async (req: Request, res: Response) => {
         error?.message || "Something went wrong",
         error,
         500,
-        error?.stack
+        error?.stack,
       );
     }
   }
 };
 
+// controller for get all product from db
+const getAllProduct = async (req: Request, res: Response) => {
+  try {
+    const searchTerm = req.query.searchTerm as string | undefined;
+    const result = await ProductServices.getAllProduct(searchTerm);
+    res.json({
+      success: true,
+      message: "Successfully get all products.",
+      data: result,
+    });
+  } catch (error: any) {
+    sendErrorResponse(
+      res,
+      error?.message || "Something went wrong",
+      error,
+      500,
+      error?.stack,
+    );
+  }
+};
+
 export const ProductControllers = {
   createProduct,
+  getAllProduct,
 };

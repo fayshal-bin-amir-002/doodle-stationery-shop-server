@@ -6,8 +6,9 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
+// controller func
 const getAController = async (req: Request, res: Response) => {
-  res.send("Hello World!");
+  res.send("Welcome to Doodle Stationery Shop!");
 };
 
 app.get("/", getAController);

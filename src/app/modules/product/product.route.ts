@@ -16,4 +16,7 @@ router.get("/:_id", ProductControllers.getASingleProduct);
 // handle route for update a product data
 router.put("/:_id", ProductControllers.updateAProduct);
 
+// handle route for delete a product data
+router.delete("/:_id", ProductControllers.deleteASingleProduct);
+
 export const ProductRoutes = router;

@@ -29,7 +29,7 @@ const createProduct = async (req: Request, res: Response) => {
     const result = await ProductServices.createProduct(zodParseData);
     res.json({
       success: true,
-      message: "Successfully created product",
+      message: "Product created successfully",
       data: result,
     });
   } catch (error: any) {
@@ -54,7 +54,7 @@ const getAllProduct = async (req: Request, res: Response) => {
     const result = await ProductServices.getAllProduct(searchTerm);
     res.json({
       success: true,
-      message: "Successfully get all products.",
+      message: "Products retrieved successfully",
       data: result,
     });
   } catch (error: any) {
@@ -75,7 +75,7 @@ const getASingleProduct = async (req: Request, res: Response) => {
     const result = await ProductServices.getASingleProduct(_id);
     res.json({
       success: true,
-      message: "Successfully get product",
+      message: "Product retrieved successfully",
       data: result,
     });
   } catch (error: any) {
@@ -97,7 +97,28 @@ const updateAProduct = async (req: Request, res: Response) => {
     const result = await ProductServices.updateAProduct(_id, updatedData);
     res.json({
       success: true,
-      message: "Successfully updated product data",
+      message: "Product updated successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    sendErrorResponse(
+      res,
+      error?.message || "Something went wrong",
+      error,
+      500,
+      error?.stack,
+    );
+  }
+};
+
+// controller for delete single product from db
+const deleteASingleProduct = async (req: Request, res: Response) => {
+  try {
+    const { _id } = req.params;
+    const result = await ProductServices.deleteAProduct(_id);
+    res.json({
+      success: true,
+      message: "Product deleted successfully",
       data: result,
     });
   } catch (error: any) {
@@ -116,4 +137,5 @@ export const ProductControllers = {
   getAllProduct,
   getASingleProduct,
   updateAProduct,
+  deleteASingleProduct,
 };

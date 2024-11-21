@@ -57,9 +57,16 @@ const updateAProduct = async (
   return result;
 };
 
+// service for delete a stationery product
+const deleteAProduct = async (_id: string) => {
+  await Product.findOneAndDelete({ _id });
+  return {};
+};
+
 export const ProductServices = {
   createProduct,
   getAllProduct,
   getASingleProduct,
   updateAProduct,
+  deleteAProduct,
 };

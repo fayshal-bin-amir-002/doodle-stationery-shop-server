@@ -9,7 +9,7 @@ export const sendErrorResponse = (
   message: string,
   error: string | object,
   status: number,
-  stack?: string
+  stack?: string,
 ) => {
   const errorResponse: TErrorResponse = {
     success: false,
@@ -41,7 +41,7 @@ const createProduct = async (req: Request, res: Response) => {
         error?.message || "Something went wrong",
         error,
         500,
-        error?.stack
+        error?.stack,
       );
     }
   }
@@ -63,7 +63,7 @@ const getAllProduct = async (req: Request, res: Response) => {
       error?.message || "Something went wrong",
       error,
       500,
-      error?.stack
+      error?.stack,
     );
   }
 };
@@ -84,7 +84,7 @@ const getASingleProduct = async (req: Request, res: Response) => {
       error?.message || "Something went wrong",
       error,
       500,
-      error?.stack
+      error?.stack,
     );
   }
 };
@@ -106,7 +106,7 @@ const updateAProduct = async (req: Request, res: Response) => {
       error?.message || "Something went wrong",
       error,
       500,
-      error?.stack
+      error?.stack,
     );
   }
 };
@@ -127,7 +127,7 @@ const deleteASingleProduct = async (req: Request, res: Response) => {
       error?.message || "Something went wrong",
       error,
       500,
-      error?.stack
+      error?.stack,
     );
   }
 };

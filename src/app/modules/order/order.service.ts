@@ -2,6 +2,7 @@ import { Product } from "../product/product.model";
 import { TOrder } from "./order.interface";
 import { Order } from "./order.model";
 
+// create a order to db
 const createOrder = async (orderData: TOrder) => {
   // find out the product into products collection
   const product = await Product.findOne({ _id: orderData.product });
@@ -25,6 +26,28 @@ const createOrder = async (orderData: TOrder) => {
   return result;
 };
 
+// calculate revenue of oders from db
+const calculateRevenue = async () => {
+  const result = await Order.aggregate([
+    {
+      $group: {
+        _id: null,
+        totalRevenue: {
+          $sum: "$totalPrice",
+        },
+      },
+    },
+    {
+      $project: {
+        totalRevenue: 1,
+        _id: 0,
+      },
+    },
+  ]);
+  return result;
+};
+
 export const OrderServices = {
   createOrder,
+  calculateRevenue,
 };

@@ -7,4 +7,7 @@ const router = express.Router();
 // route for creating a order
 router.post("/", OrderControllers.createOrder);
 
+// route for get orders revenue
+router.get("/revenue", OrderControllers.getRevenue);
+
 export const OrderRoutes = router;

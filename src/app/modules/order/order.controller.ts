@@ -22,12 +22,32 @@ const createOrder = async (req: Request, res: Response) => {
         error?.message || "Something went wrong",
         error,
         500,
-        error?.stack
+        error?.stack,
       );
     }
   }
 };
 
+const getRevenue = async (req: Request, res: Response) => {
+  try {
+    const result = await OrderServices.calculateRevenue();
+    res.json({
+      success: true,
+      message: "Revenue calculated successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    sendErrorResponse(
+      res,
+      error?.message || "Something went wrong",
+      error,
+      500,
+      error?.stack,
+    );
+  }
+};
+
 export const OrderControllers = {
   createOrder,
+  getRevenue,
 };

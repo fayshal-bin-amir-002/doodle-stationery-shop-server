@@ -8,7 +8,7 @@ const orderSchema = new Schema<TOrder>(
     quantity: { type: Number, required: true },
     totalPrice: { type: Number, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Order = model<TOrder>("order", orderSchema);

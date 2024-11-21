@@ -32,7 +32,14 @@ const getAllProduct = async (query: string | undefined) => {
   return result;
 };
 
+// service for get a single stationery product
+const getASingleProduct = async (_id: string) => {
+  const result = await Product.findOne({ _id });
+  return result;
+};
+
 export const ProductServices = {
   createProduct,
   getAllProduct,
+  getASingleProduct,
 };

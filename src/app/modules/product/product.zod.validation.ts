@@ -10,9 +10,9 @@ export const productValidationSchema = z.object({
       errorMap: () => ({
         message: "Category must be one of the specified values",
       }),
-    },
+    }
   ),
   description: z.string().min(1, { message: "Description is required" }),
-  quantity: z.number().int().min(0, "Quantity must be a non-negative integer"),
-  inStock: z.boolean(),
+  quantity: z.number().int().min(1, "Minimum quantity will be 1."),
+  inStock: z.boolean().default(true),
 });

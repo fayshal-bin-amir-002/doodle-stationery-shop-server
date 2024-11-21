@@ -38,8 +38,28 @@ const getASingleProduct = async (_id: string) => {
   return result;
 };
 
+// service for get a single stationery product
+const updateAProduct = async (
+  _id: string,
+  updatedData: { price: number; quantity: number },
+) => {
+  const result = await Product.findOneAndUpdate(
+    { _id },
+    {
+      $set: {
+        ...updatedData,
+      },
+    },
+    {
+      new: true,
+    },
+  );
+  return result;
+};
+
 export const ProductServices = {
   createProduct,
   getAllProduct,
   getASingleProduct,
+  updateAProduct,
 };

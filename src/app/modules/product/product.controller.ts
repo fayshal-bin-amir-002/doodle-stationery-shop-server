@@ -9,7 +9,7 @@ const sendErrorResponse = (
   message: string,
   error: string | object,
   status: number,
-  stack?: string
+  stack?: string,
 ) => {
   const errorResponse: TErrorResponse = {
     success: false,
@@ -41,7 +41,7 @@ const createProduct = async (req: Request, res: Response) => {
         error?.message || "Something went wrong",
         error,
         500,
-        error?.stack
+        error?.stack,
       );
     }
   }
@@ -63,7 +63,7 @@ const getAllProduct = async (req: Request, res: Response) => {
       error?.message || "Something went wrong",
       error,
       500,
-      error?.stack
+      error?.stack,
     );
   }
 };
@@ -79,17 +79,35 @@ const getASingleProduct = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    if (error instanceof Error && error.name === "ZodError") {
-      sendErrorResponse(res, "Validation failed", error, 400, error?.stack);
-    } else {
-      sendErrorResponse(
-        res,
-        error?.message || "Something went wrong",
-        error,
-        500,
-        error?.stack
-      );
-    }
+    sendErrorResponse(
+      res,
+      error?.message || "Something went wrong",
+      error,
+      500,
+      error?.stack,
+    );
+  }
+};
+
+// controller for get a single product from db
+const updateAProduct = async (req: Request, res: Response) => {
+  try {
+    const { _id } = req.params;
+    const updatedData = req.body;
+    const result = await ProductServices.updateAProduct(_id, updatedData);
+    res.json({
+      success: true,
+      message: "Successfully updated product data",
+      data: result,
+    });
+  } catch (error: any) {
+    sendErrorResponse(
+      res,
+      error?.message || "Something went wrong",
+      error,
+      500,
+      error?.stack,
+    );
   }
 };
 
@@ -97,4 +115,5 @@ export const ProductControllers = {
   createProduct,
   getAllProduct,
   getASingleProduct,
+  updateAProduct,
 };

@@ -22,7 +22,7 @@ const createOrder = async (req: Request, res: Response) => {
         error?.message || "Something went wrong",
         error,
         500,
-        error?.stack,
+        error?.stack
       );
     }
   }
@@ -42,7 +42,7 @@ const getRevenue = async (req: Request, res: Response) => {
       error?.message || "Something went wrong",
       error,
       500,
-      error?.stack,
+      error?.stack
     );
   }
 };

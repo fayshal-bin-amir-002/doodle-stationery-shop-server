@@ -44,7 +44,7 @@ const calculateRevenue = async () => {
       },
     },
   ]);
-  return result;
+  return result[0] || { totalRevenue: 0 };
 };
 
 export const OrderServices = {

@@ -27,7 +27,7 @@ const createProduct = async (req: Request, res: Response) => {
     const { product } = req.body;
     const zodParseData = productValidationSchema.parse(product);
     const result = await ProductServices.createProduct(zodParseData);
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Product created successfully",
       data: result,
@@ -52,7 +52,7 @@ const getAllProduct = async (req: Request, res: Response) => {
   try {
     const searchTerm = req.query.searchTerm as string | undefined;
     const result = await ProductServices.getAllProduct(searchTerm);
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Products retrieved successfully",
       data: result,
@@ -73,7 +73,14 @@ const getASingleProduct = async (req: Request, res: Response) => {
   try {
     const { _id } = req.params;
     const result = await ProductServices.getASingleProduct(_id);
-    res.json({
+    if (!result) {
+      res.status(404).json({
+        success: false,
+        message: "Product not found!",
+        data: {},
+      });
+    }
+    res.status(200).json({
       success: true,
       message: "Product retrieved successfully",
       data: result,
@@ -95,7 +102,7 @@ const updateAProduct = async (req: Request, res: Response) => {
     const { _id } = req.params;
     const updatedData = req.body;
     const result = await ProductServices.updateAProduct(_id, updatedData);
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Product updated successfully",
       data: result,
@@ -116,7 +123,7 @@ const deleteASingleProduct = async (req: Request, res: Response) => {
   try {
     const { _id } = req.params;
     const result = await ProductServices.deleteAProduct(_id);
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Product deleted successfully",
       data: result,

@@ -8,7 +8,7 @@ const createOrder = async (req: Request, res: Response) => {
     const { order } = req.body;
     const zodParseData = orderValidationSchema.parse(order);
     const result = await OrderServices.createOrder(zodParseData);
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Order created successfully",
       data: result,
@@ -22,7 +22,7 @@ const createOrder = async (req: Request, res: Response) => {
         error?.message || "Something went wrong",
         error,
         500,
-        error?.stack
+        error?.stack,
       );
     }
   }
@@ -31,7 +31,7 @@ const createOrder = async (req: Request, res: Response) => {
 const getRevenue = async (req: Request, res: Response) => {
   try {
     const result = await OrderServices.calculateRevenue();
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Revenue calculated successfully",
       data: result,
@@ -42,7 +42,7 @@ const getRevenue = async (req: Request, res: Response) => {
       error?.message || "Something went wrong",
       error,
       500,
-      error?.stack
+      error?.stack,
     );
   }
 };

@@ -57,7 +57,8 @@ Ensure you have the following installed:
 - Create a .env file in the root directory and configure the following variables:
 
 ```bash
-npm install
+PORT=5000
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/doodle-shop
 ```
 
 4. **Run the Application**:

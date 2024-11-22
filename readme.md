@@ -116,14 +116,8 @@ npm run format
 
 ### **Orders**
 
-- `GET /api/orders`  
-  Retrieve all orders.
-
 - `POST /api/orders`  
   Add a new order.
 
-- `PUT /api/orders/:id`  
-  Update an order by ID.
-
-- `DELETE /api/orders/:id`  
-  Remove an order by ID.
+- `GET /api/orders/revenue`  
+  Get revenue of orders.

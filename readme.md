@@ -46,8 +46,7 @@ Ensure you have the following installed:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-username/doodle-stationery-shop.git
-   cd doodle-stationery-shop
+   git clone https://github.com/fayshal-bin-amir-002/doodle-stationery-shop-server.git
    ```
 2. **Install Dependencies**:
    ```bash

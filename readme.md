@@ -95,3 +95,35 @@ npm run lint:fix
 ```bash
 npm run format
 ```
+
+## **API Endpoints**
+
+### **Products**
+
+- `GET /api/products`  
+  Retrieve all products.
+
+- `POST /api/products`  
+  Add a new product.
+
+- `PUT /api/products/:id`  
+  Update a product by ID.
+
+- `DELETE /api/products/:id`  
+  Remove a product by ID.
+
+---
+
+### **Orders**
+
+- `GET /api/orders`  
+  Retrieve all orders.
+
+- `POST /api/orders`  
+  Add a new order.
+
+- `PUT /api/orders/:id`  
+  Update an order by ID.
+
+- `DELETE /api/orders/:id`  
+  Remove an order by ID.

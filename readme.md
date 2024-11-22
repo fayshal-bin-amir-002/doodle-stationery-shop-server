@@ -49,3 +49,49 @@ Ensure you have the following installed:
    git clone https://github.com/your-username/doodle-stationery-shop.git
    cd doodle-stationery-shop
    ```
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+3. **Set Up Environment Variables**:
+
+- Create a .env file in the root directory and configure the following variables:
+
+```bash
+npm install
+```
+
+4. **Run the Application**:
+
+- Development Mode:
+
+```bash
+npm run start:dev
+```
+
+- Production Mode:
+
+```bash
+npm run build
+npm run start:prod
+```
+
+5. **Lint and Format Code**:
+
+- Check for linting issues:
+
+```bash
+npm run lint
+```
+
+- Fix linting issues:
+
+```bash
+npm run lint:fix
+```
+
+- Format code:
+
+```bash
+npm run format
+```

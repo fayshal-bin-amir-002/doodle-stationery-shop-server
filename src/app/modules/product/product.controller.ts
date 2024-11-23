@@ -108,6 +108,9 @@ const updateAProduct = async (req: Request, res: Response) => {
     const { _id } = req.params;
     const updatedData = req.body;
     const result = await ProductServices.updateAProduct(_id, updatedData);
+    if (!result) {
+      sendErrorResponse(res, "Product not found!", {}, 404);
+    }
     res.status(200).json({
       success: true,
       message: "Product updated successfully",
@@ -129,10 +132,14 @@ const deleteASingleProduct = async (req: Request, res: Response) => {
   try {
     const { _id } = req.params;
     const result = await ProductServices.deleteAProduct(_id);
+    if (!result) {
+      sendErrorResponse(res, "Product not found!", {}, 404);
+    }
+
     res.status(200).json({
       success: true,
       message: "Product deleted successfully",
-      data: result,
+      data: {},
     });
   } catch (error: any) {
     sendErrorResponse(

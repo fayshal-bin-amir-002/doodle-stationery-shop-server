@@ -59,8 +59,8 @@ const updateAProduct = async (
 
 // service for delete a stationery product
 const deleteAProduct = async (_id: string) => {
-  await Product.findOneAndDelete({ _id });
-  return {};
+  const result = await Product.findOneAndDelete({ _id });
+  return result;
 };
 
 export const ProductServices = {

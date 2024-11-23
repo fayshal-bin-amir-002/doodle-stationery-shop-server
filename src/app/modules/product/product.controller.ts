@@ -33,8 +33,14 @@ const createProduct = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    if (error instanceof Error && error.name === "ZodError") {
-      sendErrorResponse(res, "Validation failed", error, 400, error?.stack);
+    if (error.name === "ZodError") {
+      sendErrorResponse(
+        res,
+        error?.issues[0]?.message || "Validation failed",
+        error,
+        400,
+        error?.stack,
+      );
     } else {
       sendErrorResponse(
         res,

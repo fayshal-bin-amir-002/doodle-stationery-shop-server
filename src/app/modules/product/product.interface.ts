@@ -10,7 +10,7 @@ export type TProduct = {
     | "Technology";
   description: string;
   quantity: number;
-  inStock: boolean;
+  inStock?: boolean;
   createdAt?: string;
   updatedAt?: string;
 };

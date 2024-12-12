@@ -9,7 +9,7 @@ export const sendErrorResponse = (
   message: string,
   error: string | object,
   status: number,
-  stack?: string,
+  stack?: string
 ) => {
   const errorResponse: TErrorResponse = {
     success: false,
@@ -24,8 +24,7 @@ export const sendErrorResponse = (
 // controller for creating a product to db
 const createProduct = async (req: Request, res: Response) => {
   try {
-    const { product } = req.body;
-    const zodParseData = productValidationSchema.parse(product);
+    const zodParseData = productValidationSchema.parse(req.body);
     const result = await ProductServices.createProduct(zodParseData);
     res.status(200).json({
       success: true,
@@ -39,7 +38,7 @@ const createProduct = async (req: Request, res: Response) => {
         error?.issues[0]?.message || "Validation failed",
         error,
         400,
-        error?.stack,
+        error?.stack
       );
     } else {
       sendErrorResponse(
@@ -47,7 +46,7 @@ const createProduct = async (req: Request, res: Response) => {
         error?.message || "Something went wrong",
         error,
         500,
-        error?.stack,
+        error?.stack
       );
     }
   }
@@ -69,7 +68,7 @@ const getAllProduct = async (req: Request, res: Response) => {
       error?.message || "Something went wrong",
       error,
       500,
-      error?.stack,
+      error?.stack
     );
   }
 };
@@ -97,7 +96,7 @@ const getASingleProduct = async (req: Request, res: Response) => {
       error?.message || "Something went wrong",
       error,
       500,
-      error?.stack,
+      error?.stack
     );
   }
 };
@@ -122,7 +121,7 @@ const updateAProduct = async (req: Request, res: Response) => {
       error?.message || "Something went wrong",
       error,
       500,
-      error?.stack,
+      error?.stack
     );
   }
 };
@@ -147,7 +146,7 @@ const deleteASingleProduct = async (req: Request, res: Response) => {
       error?.message || "Something went wrong",
       error,
       500,
-      error?.stack,
+      error?.stack
     );
   }
 };

@@ -27,7 +27,7 @@ const getAllProduct = async (query: string | undefined) => {
       ],
     });
   } else {
-    result = await Product.find({});
+    result = await Product.find();
   }
   return result;
 };
@@ -41,7 +41,7 @@ const getASingleProduct = async (_id: string) => {
 // service for get a single stationery product
 const updateAProduct = async (
   _id: string,
-  updatedData: { price: number; quantity: number },
+  updatedData: { price: number; quantity: number }
 ) => {
   const result = await Product.findOneAndUpdate(
     { _id },
@@ -52,7 +52,7 @@ const updateAProduct = async (
     },
     {
       new: true,
-    },
+    }
   );
   return result;
 };

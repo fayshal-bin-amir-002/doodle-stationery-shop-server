@@ -19,7 +19,7 @@ const createOrder = async (req: Request, res: Response) => {
         error?.issues[0]?.message || "Validation failed",
         error,
         400,
-        error?.stack
+        error?.stack,
       );
     } else {
       sendErrorResponse(
@@ -27,7 +27,7 @@ const createOrder = async (req: Request, res: Response) => {
         error?.message || "Something went wrong",
         error,
         500,
-        error?.stack
+        error?.stack,
       );
     }
   }
@@ -47,7 +47,7 @@ const getRevenue = async (req: Request, res: Response) => {
       error?.message || "Something went wrong",
       error,
       500,
-      error?.stack
+      error?.stack,
     );
   }
 };

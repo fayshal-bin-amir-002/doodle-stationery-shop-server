@@ -23,7 +23,10 @@ const createOrder = async (orderData: TOrder) => {
   await product.save();
 
   const result = await Order.create(orderData);
-  return result;
+  const orderObj = result.toObject(); // Converts Mongoose document to plain object
+  const { _id, ...rest } = orderObj;
+  const formattedOrder = { _id, ...rest };
+  return formattedOrder;
 };
 
 // calculate revenue of oders from db

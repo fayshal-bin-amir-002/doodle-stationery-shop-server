@@ -4,7 +4,10 @@ import { Product } from "./product.model";
 // service for creating a stationery product
 const createProduct = async (productData: TProduct) => {
   const result = await Product.create(productData);
-  return result;
+  const productObj = result.toObject(); // Converts Mongoose document to plain object
+  const { _id, ...rest } = productObj;
+  const formattedProduct = { _id, ...rest };
+  return formattedProduct;
 };
 
 // service for get all stationery product
@@ -41,7 +44,7 @@ const getASingleProduct = async (_id: string) => {
 // service for get a single stationery product
 const updateAProduct = async (
   _id: string,
-  updatedData: { price: number; quantity: number }
+  updatedData: { price: number; quantity: number },
 ) => {
   const result = await Product.findOneAndUpdate(
     { _id },
@@ -52,7 +55,7 @@ const updateAProduct = async (
     },
     {
       new: true,
-    }
+    },
   );
   return result;
 };

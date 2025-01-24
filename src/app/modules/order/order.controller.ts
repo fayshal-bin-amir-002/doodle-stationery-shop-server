@@ -1,58 +1,42 @@
 import { Request, Response } from "express";
-import { sendErrorResponse } from "../product/product.controller";
-import { orderValidationSchema } from "./order.zod.validation";
 import { OrderServices } from "./order.service";
+import catchAsync from "../../utils/catchAsync";
+import sendResponse from "../../utils/sendResponse";
+import httpStatus from "http-status";
 
-const createOrder = async (req: Request, res: Response) => {
-  try {
-    const zodParseData = orderValidationSchema.parse(req.body);
-    const result = await OrderServices.createOrder(zodParseData);
-    res.status(200).json({
-      success: true,
-      message: "Order created successfully",
-      data: result,
-    });
-  } catch (error: any) {
-    if (error.name === "ZodError") {
-      sendErrorResponse(
-        res,
-        error?.issues[0]?.message || "Validation failed",
-        error,
-        400,
-        error?.stack,
-      );
-    } else {
-      sendErrorResponse(
-        res,
-        error?.message || "Something went wrong",
-        error,
-        500,
-        error?.stack,
-      );
-    }
-  }
-};
+const createOrder = catchAsync(async (req, res) => {
+  const email = req?.user?.email;
+  const order = await OrderServices.createOrder(email, req.body, req.ip!);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: "Order placed successfully",
+    data: order,
+  });
+});
+
+const verifyPayment = catchAsync(async (req, res) => {
+  const order = await OrderServices.verifyPayment(req.query.order_id as string);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Order verified successfully",
+    data: order,
+  });
+});
 
 const getRevenue = async (req: Request, res: Response) => {
-  try {
-    const result = await OrderServices.calculateRevenue();
-    res.status(200).json({
-      success: true,
-      message: "Revenue calculated successfully",
-      data: result,
-    });
-  } catch (error: any) {
-    sendErrorResponse(
-      res,
-      error?.message || "Something went wrong",
-      error,
-      500,
-      error?.stack,
-    );
-  }
+  const result = await OrderServices.calculateRevenue();
+  res.status(200).json({
+    success: true,
+    message: "Revenue calculated successfully",
+    data: result,
+  });
 };
 
 export const OrderControllers = {
   createOrder,
+  verifyPayment,
   getRevenue,
 };

@@ -15,6 +15,9 @@ const productSchema = new Schema<TProduct>(
         "Art Supplies",
         "Educational",
         "Technology",
+        "Cleaning Supplies",
+        "Furniture",
+        "Packaging",
       ],
     },
     description: { type: String, required: true },
@@ -23,21 +26,7 @@ const productSchema = new Schema<TProduct>(
   },
   {
     timestamps: true,
-    toJSON: {
-      virtuals: false, // Include virtuals if any
-      transform: (_doc, ret) => {
-        delete ret.__v; // Exclude __v
-        return ret; // Return the transformed object
-      },
-    },
-    toObject: {
-      virtuals: false, // Include virtuals if any
-      transform: (_doc, ret) => {
-        delete ret.__v; // Exclude __v
-        return ret; // Return the transformed object
-      },
-    },
-  },
+  }
 );
 
 export const Product = model<TProduct>("product", productSchema);

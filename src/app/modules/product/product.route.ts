@@ -1,7 +1,10 @@
 import express from "express";
 import { ProductControllers } from "./product.controller";
 import validateRequest from "../../middlewares/validateRequest";
-import { productValidationSchema } from "./product.zod.validation";
+import {
+  productUpdateValidationSchema,
+  productValidationSchema,
+} from "./product.zod.validation";
 import auth from "../../middlewares/auth";
 import { USER_ROLE } from "../user/user.constant";
 
@@ -20,7 +23,12 @@ router.post(
 router.get("/", ProductControllers.getAllProduct);
 
 // handle route for update a product data
-router.patch("/:id", auth(USER_ROLE.admin), ProductControllers.updateAProduct);
+router.patch(
+  "/:id",
+  auth(USER_ROLE.admin),
+  validateRequest(productUpdateValidationSchema),
+  ProductControllers.updateAProduct
+);
 
 // handle route for get a single product
 router.get("/:id", ProductControllers.getASingleProduct);

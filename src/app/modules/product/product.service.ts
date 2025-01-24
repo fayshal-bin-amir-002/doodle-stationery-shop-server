@@ -1,53 +1,54 @@
+import QueryBuilder from "../../builder/QueryBuilder";
+import AppError from "../../errors/AppError";
+import { ProductSearchableFields } from "./product.constant";
 import { TProduct } from "./product.interface";
 import { Product } from "./product.model";
+import httpStatus from "http-status";
 
 // service for creating a stationery product
 const createProduct = async (productData: TProduct) => {
   const result = await Product.create(productData);
-  const productObj = result.toObject(); // Converts Mongoose document to plain object
-  const { _id, ...rest } = productObj;
-  const formattedProduct = { _id, ...rest };
-  return formattedProduct;
-};
-
-// service for get all stationery product
-const getAllProduct = async (query: string | undefined) => {
-  let result = [];
-  if (query) {
-    // make a regex with case insensetive for query
-    const searchRegex = new RegExp(query, "i");
-    result = await Product.find({
-      $or: [
-        {
-          name: { $regex: searchRegex },
-        },
-        {
-          brand: { $regex: searchRegex },
-        },
-        {
-          category: { $regex: searchRegex },
-        },
-      ],
-    });
-  } else {
-    result = await Product.find();
-  }
   return result;
 };
 
+// service for get all stationery product
+const getAllProduct = async (query: Record<string, unknown>) => {
+  const productQuery = new QueryBuilder(Product.find(), query)
+    .search(ProductSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await productQuery.modelQuery;
+  const meta = await productQuery.countTotal();
+
+  return {
+    data: result,
+    meta,
+  };
+};
+
 // service for get a single stationery product
-const getASingleProduct = async (_id: string) => {
-  const result = await Product.findOne({ _id });
+const getASingleProduct = async (id: string) => {
+  if (!(await Product.findOne({ _id: id }))) {
+    throw new AppError(httpStatus.NOT_FOUND, "Product not found");
+  }
+  const result = await Product.findOne({ _id: id });
   return result;
 };
 
 // service for get a single stationery product
 const updateAProduct = async (
-  _id: string,
-  updatedData: { price: number; quantity: number },
+  id: string,
+  updatedData: { price: number; quantity: number }
 ) => {
+  if (!(await Product.findById({ _id: id }))) {
+    throw new AppError(httpStatus.NOT_FOUND, "Product not found");
+  }
+  const product = await Product.findOne({ _id: id });
   const result = await Product.findOneAndUpdate(
-    { _id },
+    { _id: id },
     {
       $set: {
         ...updatedData,
@@ -55,15 +56,17 @@ const updateAProduct = async (
     },
     {
       new: true,
-    },
+    }
   );
   return result;
 };
 
 // service for delete a stationery product
-const deleteAProduct = async (_id: string) => {
-  const result = await Product.findOneAndDelete({ _id });
-  return result;
+const deleteAProduct = async (id: string) => {
+  if (!(await Product.findOne({ _id: id }))) {
+    throw new AppError(httpStatus.NOT_FOUND, "Product not found");
+  }
+  await Product.findOneAndDelete({ _id: id });
 };
 
 export const ProductServices = {

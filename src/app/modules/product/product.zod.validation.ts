@@ -29,7 +29,7 @@ export const productValidationSchema = z.object({
 
 export const productUpdateValidationSchema = z.object({
   body: z.object({
-    price: z.number().min(0, "Price must be a positive number"),
-    quantity: z.number().int().min(1, "Minimum quantity will be 1."),
+    price: z.number().min(0, "Price must be a positive number").optional(),
+    quantity: z.number().int().optional(),
   }),
 });

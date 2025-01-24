@@ -41,12 +41,16 @@ const getASingleProduct = async (id: string) => {
 // service for get a single stationery product
 const updateAProduct = async (
   id: string,
-  updatedData: { price: number; quantity: number }
+  updatedData: { price?: number; quantity?: number; inStock?: boolean }
 ) => {
   if (!(await Product.findById({ _id: id }))) {
     throw new AppError(httpStatus.NOT_FOUND, "Product not found");
   }
-  const product = await Product.findOne({ _id: id });
+
+  if (updatedData.quantity !== undefined) {
+    updatedData.inStock = updatedData.quantity > 0;
+  }
+
   const result = await Product.findOneAndUpdate(
     { _id: id },
     {

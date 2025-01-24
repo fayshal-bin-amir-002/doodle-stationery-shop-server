@@ -1,7 +1,5 @@
 import AppError from "../../errors/AppError";
 import { Product } from "../product/product.model";
-import { TUser } from "../user/user.interface";
-import { TOrder } from "./order.interface";
 import Order from "./order.model";
 import httpStatus from "http-status";
 import { orderUtils } from "./order.utils";
@@ -30,6 +28,18 @@ const createOrder = async (
       if (!product) {
         throw new AppError(httpStatus.NOT_FOUND, "Product not found");
       }
+      if (item.quantity > product.quantity) {
+        throw new AppError(
+          httpStatus.BAD_REQUEST,
+          `${product.name} is not available this time.`
+        );
+      }
+      product.quantity -= item.quantity;
+      if (product.quantity === 0) {
+        product.inStock = false;
+      }
+      await product.save();
+
       totalPrice += product.price * item.quantity;
       return item;
     })
@@ -72,7 +82,9 @@ const verifyPayment = async (order_id: string) => {
   const verifiedPayment = await orderUtils.verifyPaymentAsync(order_id);
 
   if (verifiedPayment.length) {
-    await Order.findOneAndUpdate(
+    const bank_status = verifiedPayment[0].bank_status;
+
+    const order = await Order.findOneAndUpdate(
       {
         "transaction.id": order_id,
       },
@@ -84,15 +96,33 @@ const verifyPayment = async (order_id: string) => {
         "transaction.method": verifiedPayment[0].method,
         "transaction.date_time": verifiedPayment[0].date_time,
         status:
-          verifiedPayment[0].bank_status == "Success"
+          bank_status == "Success"
             ? "Paid"
-            : verifiedPayment[0].bank_status == "Failed"
+            : bank_status == "Failed"
               ? "Pending"
-              : verifiedPayment[0].bank_status == "Cancel"
+              : bank_status == "Cancel"
                 ? "Cancelled"
                 : "",
       }
     );
+    if (!order) {
+      throw new AppError(httpStatus.NOT_FOUND, "Order not found");
+    }
+
+    if (bank_status === "Cancel") {
+      await Promise.all(
+        order.products.map(async (item) => {
+          const product = await Product.findById(item.product);
+
+          if (product) {
+            product.quantity += item.quantity;
+            product.inStock = product.quantity > 0;
+
+            await product.save();
+          }
+        })
+      );
+    }
   }
 
   return verifiedPayment;

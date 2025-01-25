@@ -9,9 +9,8 @@ const UserSchema: Schema = new Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: 0 },
     role: { type: String, enum: ["user", "admin"], default: "user" },
-    phone: { type: String },
-    address: { type: String },
-    city: { type: String },
+    shippingAddress: { type: String, default: "" },
+    isBlocked: { type: Boolean, default: false },
   },
   {
     timestamps: true,

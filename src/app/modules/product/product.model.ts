@@ -21,6 +21,7 @@ const productSchema = new Schema<TProduct>(
       ],
     },
     description: { type: String, required: true },
+    image_url: { type: String, default: "" },
     quantity: { type: Number, required: true },
     inStock: { type: Boolean, default: true },
   },
@@ -29,4 +30,4 @@ const productSchema = new Schema<TProduct>(
   }
 );
 
-export const Product = model<TProduct>("product", productSchema);
+export const Product = model<TProduct>("Product", productSchema);

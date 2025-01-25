@@ -10,15 +10,18 @@ const router = express.Router();
 
 // route for creating a order
 router.post(
-  "/",
+  "/place-order",
   auth(USER_ROLE.user),
   validateRequest(orderValidationSchema),
   OrderControllers.createOrder
 );
 
-router.get("/verify", auth(USER_ROLE.user), OrderControllers.verifyPayment);
+router.get("/", auth(USER_ROLE.admin), OrderControllers.getOrders);
 
-// route for get orders revenue
+router.get("/my-orders", auth(USER_ROLE.user), OrderControllers.getMyOrders);
+
+router.patch("/:id", auth(USER_ROLE.admin), OrderControllers.updateOrder);
+
 router.get("/revenue", OrderControllers.getRevenue);
 
 export const OrderRoutes = router;

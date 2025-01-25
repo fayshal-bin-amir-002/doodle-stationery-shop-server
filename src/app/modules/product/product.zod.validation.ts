@@ -23,6 +23,7 @@ export const productValidationSchema = z.object({
       .trim()
       .min(1, { message: "Description is required" }),
     quantity: z.number().int().min(1, "Minimum quantity will be 1."),
+    image_url: z.string().optional().default(""),
     inStock: z.boolean().default(true).optional(),
   }),
 });

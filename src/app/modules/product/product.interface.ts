@@ -15,6 +15,7 @@ export type TProduct = {
   category: TCategories;
   description: string;
   quantity: number;
+  image_url?: string;
   inStock?: boolean;
 };
 

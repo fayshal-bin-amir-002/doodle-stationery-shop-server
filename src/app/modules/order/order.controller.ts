@@ -3,10 +3,11 @@ import { OrderServices } from "./order.service";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
+import { Types } from "mongoose";
 
 const createOrder = catchAsync(async (req, res) => {
   const email = req?.user?.email;
-  const order = await OrderServices.createOrder(email, req.body, req.ip!);
+  const order = await OrderServices.createOrder(email, req.body);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
@@ -15,13 +16,38 @@ const createOrder = catchAsync(async (req, res) => {
   });
 });
 
-const verifyPayment = catchAsync(async (req, res) => {
-  const order = await OrderServices.verifyPayment(req.query.order_id as string);
+const getOrders = catchAsync(async (req, res) => {
+  const order = await OrderServices.getOrders(req.query);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Order verified successfully",
+    message: "Order retrieved successfully",
+    data: order,
+  });
+});
+
+const getMyOrders = catchAsync(async (req, res) => {
+  const email = req?.user?.email;
+  const order = await OrderServices.getMyOrders(email, req.query);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Order retrieved successfully",
+    data: order,
+  });
+});
+
+const updateOrder = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const order = await OrderServices.updateOrder(id, req.body);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Order updated successfully",
     data: order,
   });
 });
@@ -37,6 +63,8 @@ const getRevenue = async (req: Request, res: Response) => {
 
 export const OrderControllers = {
   createOrder,
-  verifyPayment,
   getRevenue,
+  getOrders,
+  updateOrder,
+  getMyOrders,
 };

@@ -15,10 +15,9 @@ export const userValidationSchema = z.object({
         invalid_type_error: "Role must be either 'user' or 'admin'",
       })
       .default("user"),
-    phone: z.string().trim().optional(),
 
-    address: z.string().trim().optional(),
-    city: z.string().trim().optional(),
+    shippingAddress: z.string().trim().optional(),
+    isBlocked: z.boolean().default(false).optional(),
   }),
 });
 

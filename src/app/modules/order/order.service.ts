@@ -4,11 +4,12 @@ import Order from "./order.model";
 import httpStatus from "http-status";
 import { orderUtils } from "./order.utils";
 import { User } from "../user/user.model";
+import QueryBuilder from "../../builder/QueryBuilder";
+import { OrderSearchableFields } from "./order.constant";
 
 const createOrder = async (
   email: string,
-  payload: { products: { product: string; quantity: number }[] },
-  client_ip: string
+  payload: { products: { product: string; quantity: number }[] }
 ) => {
   if (!payload?.products?.length) {
     throw new AppError(httpStatus.NOT_ACCEPTABLE, "Order is not specified");
@@ -18,6 +19,10 @@ const createOrder = async (
   const user = await User.findOne({ email });
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  if (user && user?.isBlocked) {
+    throw new AppError(httpStatus.FORBIDDEN, "User is blocked!");
   }
 
   let totalPrice = 0;
@@ -34,10 +39,15 @@ const createOrder = async (
           `${product.name} is not available this time.`
         );
       }
-      product.quantity -= item.quantity;
-      if (product.quantity === 0) {
+
+      const productQuantity = product.quantity - item.quantity;
+
+      product.quantity = productQuantity;
+
+      if (productQuantity === 0) {
         product.inStock = false;
       }
+
       await product.save();
 
       totalPrice += product.price * item.quantity;
@@ -45,87 +55,92 @@ const createOrder = async (
     })
   );
 
-  let order = await Order.create({
+  const order = await Order.create({
     user: user._id,
     products: productDetails,
     totalPrice,
   });
 
-  // payment integration
-  const shurjopayPayload = {
-    amount: totalPrice,
-    order_id: order._id,
-    currency: "BDT",
-    customer_name: user.name,
-    customer_address: user?.address || "unknown",
-    customer_email: user.email,
-    customer_phone: user?.phone || "unknown",
-    customer_city: user?.city || "unknown",
-    client_ip,
-  };
-
-  const payment = await orderUtils.makePaymentAsync(shurjopayPayload);
-
-  if (payment?.transactionStatus) {
-    order = await order.updateOne({
-      transaction: {
-        id: payment.sp_order_id,
-        transactionStatus: payment.transactionStatus,
-      },
-    });
-  }
-
-  return payment.checkout_url;
+  return order;
 };
 
-const verifyPayment = async (order_id: string) => {
-  const verifiedPayment = await orderUtils.verifyPaymentAsync(order_id);
+const getOrders = async (query: Record<string, unknown>) => {
+  const orderQuery = new QueryBuilder(Order.find(), query)
+    .search(OrderSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const result = await orderQuery.modelQuery.populate("user").populate({
+    path: "products.product",
+  });
+  const meta = await orderQuery.countTotal();
 
-  if (verifiedPayment.length) {
-    const bank_status = verifiedPayment[0].bank_status;
+  return {
+    data: result,
+    meta,
+  };
+};
 
-    const order = await Order.findOneAndUpdate(
-      {
-        "transaction.id": order_id,
-      },
-      {
-        "transaction.bank_status": verifiedPayment[0].bank_status,
-        "transaction.sp_code": verifiedPayment[0].sp_code,
-        "transaction.sp_message": verifiedPayment[0].sp_message,
-        "transaction.transactionStatus": verifiedPayment[0].transaction_status,
-        "transaction.method": verifiedPayment[0].method,
-        "transaction.date_time": verifiedPayment[0].date_time,
-        status:
-          bank_status == "Success"
-            ? "Paid"
-            : bank_status == "Failed"
-              ? "Pending"
-              : bank_status == "Cancel"
-                ? "Cancelled"
-                : "",
-      }
+const getMyOrders = async (email: string, query: Record<string, unknown>) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+  const orderQuery = new QueryBuilder(Order.find({ user: user?.id }), query)
+    .search([])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await orderQuery.modelQuery.populate("user").populate({
+    path: "products.product",
+  });
+  const meta = await orderQuery.countTotal();
+
+  return {
+    data: result,
+    meta,
+  };
+};
+
+const updateOrder = async (id: string, payload: { status: string }) => {
+  const result = await Order.findByIdAndUpdate(
+    id,
+    {
+      status: payload.status,
+    },
+    { new: true }
+  );
+
+  const order = await Order.findById(id);
+
+  if (order && order.status === "Cancelled") {
+    const products = order.products;
+    await Promise.all(
+      products.map(async (item) => {
+        const product = await Product.findById(item.product);
+        if (!product) {
+          throw new AppError(httpStatus.NOT_FOUND, "Product not found");
+        }
+
+        const productQuantity = product.quantity + item.quantity;
+
+        product.quantity = productQuantity;
+
+        if (productQuantity === 0) {
+          product.inStock = false;
+        } else if (productQuantity > 0) {
+          product.inStock = true;
+        }
+
+        await product.save();
+      })
     );
-    if (!order) {
-      throw new AppError(httpStatus.NOT_FOUND, "Order not found");
-    }
-
-    if (bank_status === "Cancel") {
-      await Promise.all(
-        order.products.map(async (item) => {
-          const product = await Product.findById(item.product);
-
-          if (product) {
-            product.quantity += item.quantity;
-            product.inStock = product.quantity > 0;
-
-            await product.save();
-          }
-        })
-      );
-    }
   }
 
-  return verifiedPayment;
+  return result;
 };
 
 // calculate revenue of oders from db
@@ -151,6 +166,8 @@ const calculateRevenue = async () => {
 
 export const OrderServices = {
   createOrder,
-  verifyPayment,
   calculateRevenue,
+  getOrders,
+  updateOrder,
+  getMyOrders,
 };

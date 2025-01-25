@@ -6,9 +6,8 @@ export interface TUser extends Document {
   email: string;
   password: string;
   role: "user" | "admin";
-  phone?: string;
-  address?: string;
-  city?: string;
+  shippingAddress: string;
+  isBlocked: boolean;
 }
 
 export interface TLoginUser {

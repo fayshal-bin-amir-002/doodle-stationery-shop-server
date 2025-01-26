@@ -9,7 +9,7 @@ import { OrderSearchableFields } from "./order.constant";
 
 const createOrder = async (
   email: string,
-  payload: { products: { product: string; quantity: number }[] }
+  payload: { products: { product: string; quantity: number }[] },
 ) => {
   if (!payload?.products?.length) {
     throw new AppError(httpStatus.NOT_ACCEPTABLE, "Order is not specified");
@@ -36,7 +36,7 @@ const createOrder = async (
       if (item.quantity > product.quantity) {
         throw new AppError(
           httpStatus.BAD_REQUEST,
-          `${product.name} is not available this time.`
+          `${product.name} is not available this time.`,
         );
       }
 
@@ -52,7 +52,7 @@ const createOrder = async (
 
       totalPrice += product.price * item.quantity;
       return item;
-    })
+    }),
   );
 
   const order = await Order.create({
@@ -65,7 +65,7 @@ const createOrder = async (
 };
 
 const getOrders = async (query: Record<string, unknown>) => {
-  const orderQuery = new QueryBuilder(Order.find(), query)
+  const orderQuery = new QueryBuilder(Order.find({}), query)
     .search(OrderSearchableFields)
     .filter()
     .sort()
@@ -105,13 +105,13 @@ const getMyOrders = async (email: string, query: Record<string, unknown>) => {
   };
 };
 
-const updateOrder = async (id: string, payload: { status: string }) => {
+const updateOrder = async (id: string) => {
   const result = await Order.findByIdAndUpdate(
     id,
     {
-      status: payload.status,
+      status: "Shipped",
     },
-    { new: true }
+    { new: true },
   );
 
   const order = await Order.findById(id);
@@ -136,7 +136,7 @@ const updateOrder = async (id: string, payload: { status: string }) => {
         }
 
         await product.save();
-      })
+      }),
     );
   }
 

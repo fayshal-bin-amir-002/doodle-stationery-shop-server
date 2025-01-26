@@ -26,7 +26,7 @@ const loginUser = async (payload: TLoginUser) => {
 
   const isPasswordMatched = await User.isPasswordMatched(
     payload.password,
-    user.password
+    user.password,
   );
 
   if (!isPasswordMatched) {
@@ -41,13 +41,13 @@ const loginUser = async (payload: TLoginUser) => {
   const accessToken = createToken(
     jwtPayload,
     config.jwt_access_secret as string,
-    config.jwt_access_expires_in
+    config.jwt_access_expires_in,
   );
 
   const refreshToken = createToken(
     jwtPayload,
     config.jwt_refresh_secret as string,
-    config.jwt_refresh_expires_in as string
+    config.jwt_refresh_expires_in as string,
   );
 
   return {
@@ -66,7 +66,7 @@ const getMe = async (email: string) => {
 
 const updateUser = async (
   email: string,
-  payload: { shippingAddress: string }
+  payload: { shippingAddress: string },
 ) => {
   const user = await User.findOne({ email });
   if (!user) {
@@ -75,7 +75,7 @@ const updateUser = async (
   const result = await User.findOneAndUpdate(
     { email },
     { $set: payload },
-    { new: true }
+    { new: true },
   );
   return result;
 };
@@ -100,7 +100,7 @@ const blockUser = async (email: string) => {
   const user = await User.findOneAndUpdate(
     { email },
     { $set: { isBlocked: true } },
-    { new: true }
+    { new: true },
   );
   return user;
 };

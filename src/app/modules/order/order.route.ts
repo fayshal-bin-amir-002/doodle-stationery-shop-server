@@ -13,7 +13,7 @@ router.post(
   "/place-order",
   auth(USER_ROLE.user),
   validateRequest(orderValidationSchema),
-  OrderControllers.createOrder
+  OrderControllers.createOrder,
 );
 
 router.get("/", auth(USER_ROLE.admin), OrderControllers.getOrders);

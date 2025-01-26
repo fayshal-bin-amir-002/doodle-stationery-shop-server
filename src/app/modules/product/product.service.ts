@@ -41,7 +41,7 @@ const getASingleProduct = async (id: string) => {
 // service for get a single stationery product
 const updateAProduct = async (
   id: string,
-  updatedData: { price?: number; quantity?: number; inStock?: boolean }
+  updatedData: { price?: number; quantity?: number; inStock?: boolean },
 ) => {
   if (!(await Product.findById({ _id: id }))) {
     throw new AppError(httpStatus.NOT_FOUND, "Product not found");
@@ -60,7 +60,7 @@ const updateAProduct = async (
     },
     {
       new: true,
-    }
+    },
   );
   return result;
 };

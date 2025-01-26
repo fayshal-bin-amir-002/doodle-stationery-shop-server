@@ -42,7 +42,7 @@ const getMyOrders = catchAsync(async (req, res) => {
 const updateOrder = catchAsync(async (req, res) => {
   const { id } = req.params;
 
-  const order = await OrderServices.updateOrder(id, req.body);
+  const order = await OrderServices.updateOrder(id);
 
   sendResponse(res, {
     success: true,

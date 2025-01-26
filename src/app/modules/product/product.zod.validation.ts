@@ -16,7 +16,7 @@ export const productValidationSchema = z.object({
         "Furniture",
         "Packaging",
       ],
-      { errorMap: () => ({ message: "Invalid category" }) }
+      { errorMap: () => ({ message: "Invalid category" }) },
     ),
     description: z
       .string()

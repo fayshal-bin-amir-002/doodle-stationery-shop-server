@@ -25,6 +25,13 @@ class QueryBuilder<T> {
     const excludeFields = ["searchTerm", "sort", "limit", "page", "fields"];
     excludeFields.forEach((el) => delete queryObj[el]);
 
+    if (queryObj.price) {
+      this.modelQuery = this.modelQuery.find({
+        price: { $lte: queryObj.price },
+      });
+      delete queryObj.price;
+    }
+
     this.modelQuery = this.modelQuery.find(queryObj);
 
     return this;

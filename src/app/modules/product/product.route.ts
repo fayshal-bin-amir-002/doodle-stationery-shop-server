@@ -16,7 +16,7 @@ router.post(
   "/",
   auth(USER_ROLE.admin),
   validateRequest(productValidationSchema),
-  ProductControllers.createProduct
+  ProductControllers.createProduct,
 );
 
 // handle route for get all product
@@ -27,7 +27,7 @@ router.patch(
   "/:id",
   auth(USER_ROLE.admin),
   validateRequest(productUpdateValidationSchema),
-  ProductControllers.updateAProduct
+  ProductControllers.updateAProduct,
 );
 
 // handle route for get a single product
@@ -37,7 +37,7 @@ router.get("/:id", ProductControllers.getASingleProduct);
 router.delete(
   "/:id",
   auth(USER_ROLE.admin),
-  ProductControllers.deleteASingleProduct
+  ProductControllers.deleteASingleProduct,
 );
 
 export const ProductRoutes = router;

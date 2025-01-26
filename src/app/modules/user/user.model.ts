@@ -14,13 +14,13 @@ const UserSchema: Schema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 UserSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(
     this.password as string,
-    Number(config.bycrypt_salt_round)
+    Number(config.bycrypt_salt_round),
   );
 
   next();
@@ -37,7 +37,7 @@ UserSchema.statics.isUserExists = async function (email: string) {
 
 UserSchema.statics.isPasswordMatched = async function (
   plainTextPassword,
-  hashedPassword
+  hashedPassword,
 ) {
   return await bcrypt.compare(plainTextPassword, hashedPassword);
 };

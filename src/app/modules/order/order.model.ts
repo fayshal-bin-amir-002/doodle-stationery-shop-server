@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import { TOrder } from "./order.interface";
 
 const OrderSchema = new Schema<TOrder>(
@@ -11,7 +11,7 @@ const OrderSchema = new Schema<TOrder>(
     products: [
       {
         product: {
-          type: Schema.Types.ObjectId,
+          type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
           required: true,
         },
@@ -33,7 +33,7 @@ const OrderSchema = new Schema<TOrder>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Order = model<TOrder>("Order", OrderSchema);

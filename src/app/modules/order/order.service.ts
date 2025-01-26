@@ -2,7 +2,6 @@ import AppError from "../../errors/AppError";
 import { Product } from "../product/product.model";
 import Order from "./order.model";
 import httpStatus from "http-status";
-import { orderUtils } from "./order.utils";
 import { User } from "../user/user.model";
 import QueryBuilder from "../../builder/QueryBuilder";
 import { OrderSearchableFields } from "./order.constant";
@@ -144,29 +143,94 @@ const updateOrder = async (id: string) => {
 };
 
 // calculate revenue of oders from db
-const calculateRevenue = async () => {
-  const result = await Order.aggregate([
+const adminDashboardData = async () => {
+  const aggregateResult = await Order.aggregate([
     {
-      $group: {
-        _id: null,
-        totalRevenue: {
-          $sum: "$totalPrice",
-        },
-      },
-    },
-    {
-      $project: {
-        totalRevenue: 1,
-        _id: 0,
+      $facet: {
+        orderSummary: [
+          {
+            $group: {
+              _id: null,
+              totalRevenue: { $sum: "$totalPrice" },
+              totalOrders: { $sum: 1 },
+              pendingOrders: {
+                $sum: {
+                  $cond: {
+                    if: { $eq: ["$status", "Pending"] },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
+              shippedOrders: {
+                $sum: {
+                  $cond: {
+                    if: { $eq: ["$status", "Shipped"] },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
+            },
+          },
+          {
+            $project: {
+              totalRevenue: 1,
+              totalOrders: 1,
+              pendingOrders: 1,
+              shippedOrders: 1,
+              _id: 0,
+            },
+          },
+        ],
+        mostSoldItem: [
+          {
+            $unwind: "$products",
+          },
+          {
+            $group: {
+              _id: "$products.product",
+              totalQuantity: { $sum: "$products.quantity" },
+            },
+          },
+          { $sort: { totalQuantity: -1 } },
+          { $limit: 5 },
+        ],
       },
     },
   ]);
-  return result[0] || { totalRevenue: 0 };
+
+  const mostSoldProducts = aggregateResult[0].mostSoldItem.map((item: any) => ({
+    productId: item._id,
+    soldQuantity: item.totalQuantity,
+  }));
+
+  const populatedProducts = await Product.find({
+    _id: { $in: mostSoldProducts.map((item: any) => item.productId) },
+  }).select("name");
+
+  const finalResults = populatedProducts.map((product: any) => {
+    const soldQuantity = mostSoldProducts.find(
+      (item: any) => item.productId.toString() === product._id.toString(),
+    )?.soldQuantity;
+
+    return {
+      ...product.toObject(),
+      soldQuantity: soldQuantity || 0,
+    };
+  });
+
+  const result = {
+    orderSummary: aggregateResult[0]?.orderSummary[0],
+    mostSoldItem: finalResults,
+  };
+
+  return result;
 };
 
 export const OrderServices = {
   createOrder,
-  calculateRevenue,
+  adminDashboardData,
   getOrders,
   updateOrder,
   getMyOrders,

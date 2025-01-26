@@ -3,7 +3,6 @@ import { OrderServices } from "./order.service";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
-import { Types } from "mongoose";
 
 const createOrder = catchAsync(async (req, res) => {
   const email = req?.user?.email;
@@ -52,8 +51,8 @@ const updateOrder = catchAsync(async (req, res) => {
   });
 });
 
-const getRevenue = async (req: Request, res: Response) => {
-  const result = await OrderServices.calculateRevenue();
+const getadminDashboardData = async (req: Request, res: Response) => {
+  const result = await OrderServices.adminDashboardData();
   res.status(200).json({
     success: true,
     message: "Revenue calculated successfully",
@@ -63,7 +62,7 @@ const getRevenue = async (req: Request, res: Response) => {
 
 export const OrderControllers = {
   createOrder,
-  getRevenue,
+  getadminDashboardData,
   getOrders,
   updateOrder,
   getMyOrders,

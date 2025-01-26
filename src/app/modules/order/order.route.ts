@@ -22,6 +22,10 @@ router.get("/my-orders", auth(USER_ROLE.user), OrderControllers.getMyOrders);
 
 router.patch("/:id", auth(USER_ROLE.admin), OrderControllers.updateOrder);
 
-router.get("/revenue", OrderControllers.getRevenue);
+router.get(
+  "/dashboard-data",
+  auth(USER_ROLE.admin),
+  OrderControllers.getadminDashboardData,
+);
 
 export const OrderRoutes = router;

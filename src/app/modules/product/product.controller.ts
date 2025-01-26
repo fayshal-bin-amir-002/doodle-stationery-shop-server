@@ -1,5 +1,3 @@
-import { Request, Response } from "express";
-import { productValidationSchema } from "./product.zod.validation";
 import { ProductServices } from "./product.service";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";

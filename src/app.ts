@@ -1,5 +1,6 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { ProductRoutes } from "./app/modules/product/product.route";
 import { OrderRoutes } from "./app/modules/order/order.route";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
@@ -9,11 +10,15 @@ const app: Application = express();
 
 // parsers
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5175"],
+    origin: [
+      "http://localhost:5175",
+      "https://doodle-stationery-shop.vercel.app",
+    ],
     credentials: true,
-  }),
+  })
 );
 
 app.use("/api/products", ProductRoutes);
